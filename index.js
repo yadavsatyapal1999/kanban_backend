@@ -4,6 +4,7 @@ const mongoose = require('mongoose')
 const app = express();
 const newtodo = require('./Logic/AddTodo')
 const newproject = require('./Logic/Addnewproject')
+const user = require('./Logic/User')
 require('dotenv').config();
 
 
@@ -22,7 +23,8 @@ mongoose.connect(process.env.MONGO_DB)
         console.log(err);
     })
 
-app.use('/addtodo', newtodo);
+app.use('/todo', newtodo);
 app.use('/project', newproject)
+app.use('/user',user)
 
 
