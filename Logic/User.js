@@ -9,7 +9,7 @@ userrouter.post('/new', (req, res) => {
     bcrypt.hash(data.password, 10).then(hashedpass => {
 
         const user = new userSchema({
-            userid: data.userid,
+            email: data.email,
             password: hashedpass
         })
 
@@ -36,17 +36,17 @@ userrouter.post('/new', (req, res) => {
 })
 
 userrouter.post('/login', (req, res) => {
-
+console.log("login")
     const data = req.body;
 
-    userSchema.findOne({ userid: data.userid }).then(user => {
+    userSchema.findOne({ email: data.email }).then(user => {
         if (user) {
            // console.log(user)
             bcrypt.compare( data.password,user.password).then(response => {
-                console.log(response)
+               console.log(user)
                 if (response) {
                     const token = jwt.sign({
-                        userid: user.userid,
+                        email: user.email,
                         id: user._id
                     },
                         process.env.SECRET_KEY, {
@@ -56,7 +56,7 @@ userrouter.post('/login', (req, res) => {
                     res.status(200).json({
                         message: "Login credential matched!!",
                         Token: token,
-                        name: user.userid.split("@")[0],
+                        name: user.email.split("@")[0],
                         user: user.userid,
                     })
                 } else {
