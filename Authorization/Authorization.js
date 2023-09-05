@@ -9,7 +9,7 @@ const authentication = (req, res, next) => {
         const token = req.headers.authorization
         const verify = jwt.verify(token, process.env.SECRET_KEY);
         console.log("auth sucessful");
-
+             req.owner = verify.id;
         next();
 
     }

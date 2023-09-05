@@ -2,8 +2,8 @@ const bodyParser = require('body-parser');
 const express = require('express');
 const mongoose = require('mongoose')
 const app = express();
-const newtodo = require('./Logic/AddTodo')
-const newproject = require('./Logic/Addnewproject')
+const task= require('./Logic/Task')
+const Kanban = require('./Logic/Kanban')
 const user = require('./Logic/User')
 require('dotenv').config();
 
@@ -23,8 +23,8 @@ mongoose.connect(process.env.MONGO_DB)
         console.log(err);
     })
 
-app.use('/todo', newtodo);
-app.use('/project', newproject)
+app.use('/task', task);
+app.use('/kanban', Kanban)
 app.use('/user',user)
 
 
