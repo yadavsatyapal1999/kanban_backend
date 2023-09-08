@@ -2,9 +2,10 @@ const express = require('express');
 const userrouter = express.Router();
 const userSchema = require('../Schema/User');
 const bcrypt = require('bcrypt')
-const jwt = require('jsonwebtoken')
+const jwt = require('jsonwebtoken');
+const Kanban = require('../Schema/Kanban')
 
-userrouter.post('/new', (req, res) => {
+userrouter.post('/new', async (req, res) => {
     const data = req.body;
     bcrypt.hash(data.password, 10).then(hashedpass => {
 
@@ -13,11 +14,43 @@ userrouter.post('/new', (req, res) => {
             password: hashedpass
         })
 
+
+
         user.save().then(data => {
-            res.status(200).send({
-                message: "user registered sucessfully",
-                detail: data
+
+            const done = new Kanban({
+                owner: data._id,
+                Kanban: "Done"
             })
+            const todo = new Kanban({
+                owner: data._id,
+                Kanban: "Todo"
+            })
+
+            const doing = new Kanban({
+                owner: data._id,
+                Kanban: "Doing"
+            })
+
+            done.save().then(() => {
+                todo.save().then(() => {
+                    doing.save().then(() => {
+                        res.status(200).send({
+                            message: "user registered sucessfully",
+                            detail: data
+                        })
+                    }).catch(err => {
+                        res.status(400).send("failed to add kanban for Doing")
+                    })
+                })
+                    .catch(err => {
+                        res.status(400).send("failed to add kanban for TODO")
+                    })
+            })
+                .catch(err => {
+                    res.status(400).send("failed to add kanban for Done")
+                })
+
 
         })
             .catch(err => {
@@ -36,14 +69,14 @@ userrouter.post('/new', (req, res) => {
 })
 
 userrouter.post('/login', (req, res) => {
-console.log("login")
+    console.log("login")
     const data = req.body;
 
     userSchema.findOne({ email: data.email }).then(user => {
         if (user) {
-           // console.log(user)
-            bcrypt.compare( data.password,user.password).then(response => {
-               console.log(user)
+            // console.log(user)
+            bcrypt.compare(data.password, user.password).then(response => {
+                console.log(user)
                 if (response) {
                     const token = jwt.sign({
                         email: user.email,
@@ -57,7 +90,7 @@ console.log("login")
                         message: "Login credential matched!!",
                         Token: token,
                         name: user.email.split("@")[0],
-                        user: user.userid,
+                        user: user._id,
                     })
                 } else {
                     res.status(400).json({
