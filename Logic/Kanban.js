@@ -9,7 +9,7 @@ projectrouter.get('/', (req, res) => {
 })
 
 projectrouter.post('/new', auth, (req, res) => {
-    console.log("newproject")
+    console.log("New Kanabn")
     const project = req.body;
     const id = req.owner;
     const data = new kanban({

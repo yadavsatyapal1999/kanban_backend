@@ -6,6 +6,7 @@ const jwt = require('jsonwebtoken');
 const Kanban = require('../Schema/Kanban')
 
 userrouter.post('/new', async (req, res) => {
+    console.log("new user");
     const data = req.body;
     bcrypt.hash(data.password, 10).then(hashedpass => {
 
