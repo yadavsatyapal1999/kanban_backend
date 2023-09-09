@@ -11,6 +11,7 @@ require('dotenv').config();
 
 app.use(cors({}))
 app.use(bodyParser.json());
+app.use(express.json())
 
 mongoose.connect(process.env.MONGO_DB)
     .then(res => {

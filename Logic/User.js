@@ -8,6 +8,7 @@ const Kanban = require('../Schema/Kanban')
 userrouter.post('/new', async (req, res) => {
     console.log("new user");
     const data = req.body;
+    //console.log(data)
     bcrypt.hash(data.password, 10).then(hashedpass => {
 
         const user = new userSchema({
@@ -19,6 +20,7 @@ userrouter.post('/new', async (req, res) => {
 
         user.save().then(data => {
 
+            console.log(data)
             const done = new Kanban({
                 owner: data._id,
                 Kanban: "Done"
@@ -33,6 +35,7 @@ userrouter.post('/new', async (req, res) => {
                 Kanban: "Doing"
             })
 
+
             done.save().then(() => {
                 todo.save().then(() => {
                     doing.save().then(() => {
@@ -41,14 +44,17 @@ userrouter.post('/new', async (req, res) => {
                             detail: data
                         })
                     }).catch(err => {
+                        console.log(err)
                         res.status(400).send("failed to add kanban for Doing")
                     })
                 })
                     .catch(err => {
+                        console.log(err)
                         res.status(400).send("failed to add kanban for TODO")
                     })
             })
                 .catch(err => {
+                    console.log(err)
                     res.status(400).send("failed to add kanban for Done")
                 })
 
@@ -61,6 +67,7 @@ userrouter.post('/new', async (req, res) => {
 
     })
         .catch(err => {
+            console.log(err)
             res.status(500).send("Internal server error")
         })
 

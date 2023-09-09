@@ -4,8 +4,18 @@ const projectrouter = express.Router();
 const auth = require("../Authorization/Authorization")
 
 
-projectrouter.get('/', (req, res) => {
-    res.send("get task");
+projectrouter.get('/get/:owner', (req, res) => {
+    console.log("get kanban")
+    const owner = req.params.owner ;
+    console.log(owner)
+    kanban.find({owner:owner}).then(data=>{
+        res.status(200).send(data)
+        console.log("kanban of owner send");
+    })
+    .catch(err=>{
+      console.log(err);
+      res.status(400)
+    })
 })
 
 projectrouter.post('/new', auth, (req, res) => {
