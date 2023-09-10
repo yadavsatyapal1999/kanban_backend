@@ -4,8 +4,18 @@ const projectrouter = express.Router();
 const auth = require("../Authorization/Authorization")
 
 
-projectrouter.get('/', (req, res) => {
-    res.send("get task");
+projectrouter.get('/get/:owner', (req, res) => {
+    console.log("get kanban")
+    const owner = req.params.owner ;
+    console.log(owner)
+    kanban.find({owner:owner}).then(data=>{
+        res.status(200).send(data)
+        console.log("kanban of owner send");
+    })
+    .catch(err=>{
+      console.log(err);
+      res.status(400)
+    })
 })
 
 projectrouter.post('/new', auth, (req, res) => {
@@ -14,8 +24,9 @@ projectrouter.post('/new', auth, (req, res) => {
     const id = req.owner;
     const data = new kanban({
         owner: id,
-        Kanban: project.kanban
+        Kanban: project.Kanban
     })
+    console.log(project)
     data.save().then(rec => {
         console.log("New Project Saved");
         res.status(200).send('data saved sucessfully')
@@ -24,6 +35,7 @@ projectrouter.post('/new', auth, (req, res) => {
             res.status(500)
                 //console.log(err)
                 .send(err)
+                console.log(err)
         })
 
 })
