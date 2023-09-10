@@ -8,73 +8,41 @@ const Kanban = require('../Schema/Kanban')
 userrouter.post('/new', async (req, res) => {
     console.log("new user");
     const data = req.body;
-    //console.log(data)
-    bcrypt.hash(data.password, 10).then(hashedpass => {
+    let userexist = await userSchema.findOne({ email: data.email })
+    if (userexist) {
+        res.status(400).send("user already exist")
+    }
 
-        const user = new userSchema({
-            email: data.email,
-            password: hashedpass
-        })
+    else {
+        //console.log(data)
+        bcrypt.hash(data.password, 10).then(hashedpass => {
 
-
-
-        user.save().then(data => {
-
-            console.log(data)
-            const done = new Kanban({
-                owner: data._id,
-                Kanban: "Done"
-            })
-            const todo = new Kanban({
-                owner: data._id,
-                Kanban: "Todo"
-            })
-
-            const doing = new Kanban({
-                owner: data._id,
-                Kanban: "Doing"
+            const user = new userSchema({
+                email: data.email,
+                password: hashedpass
             })
 
 
-            done.save().then(() => {
-                todo.save().then(() => {
-                    doing.save().then(() => {
-                        res.status(200).send({
-                            message: "user registered sucessfully",
-                            detail: data
-                        })
-                    }).catch(err => {
-                        console.log(err)
-                        res.status(400).send("failed to add kanban for Doing")
-                    })
-                })
-                    .catch(err => {
-                        console.log(err)
-                        res.status(400).send("failed to add kanban for TODO")
-                    })
+
+            user.save().then(data => {
+                console.log(data)
+
+                res.status(200)
             })
+
                 .catch(err => {
                     console.log(err)
-                    res.status(400).send("failed to add kanban for Done")
+                    res.status(500).send("Internal server error")
                 })
 
 
-        })
-            .catch(err => {
-                res.status(400).send("user already exist");
-                console.log(err)
-            })
 
-    })
-        .catch(err => {
-            console.log(err)
-            res.status(500).send("Internal server error")
         })
 
 
-
-
+    }
 })
+
 
 userrouter.post('/login', (req, res) => {
     console.log("login")
@@ -107,13 +75,13 @@ userrouter.post('/login', (req, res) => {
                 }
             })
         } else {
-            res.status(400).json({
+            res.status(500).json({
                 message: "Email is not registered with us.."
             })
         }
     })
         .catch(err => {
-            res.status(500).json({
+            res.status(600).json({
                 message: "Internal server Error!!"
             })
 

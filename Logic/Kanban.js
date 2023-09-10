@@ -24,8 +24,9 @@ projectrouter.post('/new', auth, (req, res) => {
     const id = req.owner;
     const data = new kanban({
         owner: id,
-        Kanban: project.kanban
+        Kanban: project.Kanban
     })
+    console.log(project)
     data.save().then(rec => {
         console.log("New Project Saved");
         res.status(200).send('data saved sucessfully')
@@ -34,6 +35,7 @@ projectrouter.post('/new', auth, (req, res) => {
             res.status(500)
                 //console.log(err)
                 .send(err)
+                console.log(err)
         })
 
 })
